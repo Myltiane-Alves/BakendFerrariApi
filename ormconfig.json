@@ -4,7 +4,7 @@
     "port": 3306,
     "username": "root",
     "password": "95325414",
-    "database": "ferrari-api",
+    "database": "ferrariapi",
     "synchronize": true,
     "logging": false,
     "entities": [

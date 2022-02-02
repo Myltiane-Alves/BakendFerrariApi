@@ -1,11 +1,11 @@
-import {MigrationInterface, QueryRunner, Table} from "typeorm";
+import { MigrationInterface, QueryRunner, Table, TableForeignKey } from "typeorm";
 
-export class User1643737310679 implements MigrationInterface {
+export class User1643754420957 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(new Table({
             name: 'persons',
-            columns:[{
+            columns: [{
                 name: 'id',
                 type: 'int',
                 isPrimary: true,
@@ -62,7 +62,7 @@ export class User1643737310679 implements MigrationInterface {
                 isNullable: true
             }, {
                 name: 'personId',
-                type: 'detetime',
+                type: 'int',
                 isNullable: false,
             }, {
                 name: 'createdAt',
@@ -73,13 +73,21 @@ export class User1643737310679 implements MigrationInterface {
                 type: 'datetime',
                 default: 'CURRENT_TIMESTAMP',
             }]
-        }))
+        }));
 
+        await queryRunner.createForeignKey("users", new TableForeignKey({
+            columnNames: ["personId"],
+            referencedColumnNames: ["id"],
+            referencedTableName: "persons",
+            name: "FK_users_persons",
+            onDelete: "CASCADE"
+        }));
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable("persons")
-        await queryRunner.dropTable("users")
+        await queryRunner.dropForeignKey("users", "FK_users_persons");
+        await queryRunner.dropTable("users");
+        await queryRunner.dropTable("persons");
     }
 
 }
