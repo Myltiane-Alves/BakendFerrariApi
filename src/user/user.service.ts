@@ -1,17 +1,19 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
 export class UserService {
     constructor(private prisma: PrismaService) {}
 
-    get(id: number) {
+    async get(id: number) {
 
-        if(isNaN(Number(id))) {
+        id = Number(id);
+
+        if(isNaN(id)) {
             throw new BadRequestException('ID is required');
         }
 
-        const user = this.prisma.user.findUnique({
+        const user = await this.prisma.user.findUnique({
             where: {
                 id,
             },
@@ -19,5 +21,33 @@ export class UserService {
                 person: true
             },
         });
+
+        if (!user) {
+            throw new NotFoundException("User not found")
+        }
+
+        return user;
+    }
+
+    async getByEmail(email: string) {
+        
+        if(!email) {
+            throw new BadRequestException('E-mail is required');
+        }
+
+        const user = await this.prisma.user.findUnique({
+            where: {
+                email,
+            },
+            include: {
+                person: true
+            },
+        });
+
+        if (!user) {
+            throw new NotFoundException("User not found")
+        }
+
+        return user;
     }
 }
