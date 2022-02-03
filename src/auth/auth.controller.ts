@@ -1,4 +1,5 @@
 import { Body, Controller, Post } from "@nestjs/common";
+import { parse } from "date-fns";
 import { UserService } from "src/user/user.service";
 
 @Controller('auth')
@@ -19,8 +20,26 @@ export class AuthController {
     }
 
     @Post('register')
-    async register(@Body() body) {
+    async register(
+        @Body('name') name, 
+        @Body('email') email, 
+        @Body('password') password, 
+        @Body('phone') phone, 
+        @Body('birthAt') birthAt, 
+        @Body('document') document, 
         
-        return this.userService.create();
+        
+        ) {
+        
+        birthAt = parse(birthAt, 'yyyy-MM-dd', new Date());
+
+        return this.userService.create({
+            name,
+            email,
+            password,
+            phone,
+            document,
+            birthAt,
+        });
     }
 }

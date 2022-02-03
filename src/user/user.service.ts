@@ -50,4 +50,37 @@ export class UserService {
 
         return user;
     }
+
+    async create({
+        name,
+        email,
+        password,
+        birthAt,
+        phone,
+        document,
+    }: {
+        name: string;
+        email: string;
+        password: string;
+        birthAt?: Date;
+        phone?: string;
+        document?: string;
+    }) {
+
+        if(!name) {
+            throw new BadRequestException("Name is required");
+        }
+        
+        if(!email) {
+            throw new BadRequestException("E-mail is required");
+        }
+
+        if(!password) {
+            throw new BadRequestException("Password is required");
+        }
+
+        if(birthAt && birthAt.toString().toLowerCase() === 'invaliddate'){
+            throw new BadRequestException('Birth date is valid');
+        }
+    }
 }
