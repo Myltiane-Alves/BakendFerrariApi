@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -48,6 +49,8 @@ export class UserService {
             throw new NotFoundException("User not found")
         }
 
+        delete user.password;
+
         return user;
     }
 
@@ -57,7 +60,7 @@ export class UserService {
         password,
         birthAt,
         phone,
-        document,
+        document
     }: {
         name: string;
         email: string;
@@ -82,5 +85,78 @@ export class UserService {
         if(birthAt && birthAt.toString().toLowerCase() === 'invaliddate'){
             throw new BadRequestException('Birth date is valid');
         }
+
+        let user = null;
+
+        try {
+            user = await this.getByEmail(email);
+        } catch (e) {
+
+        }
+
+        if (user) {
+            throw new BadRequestException("Email already exists");
+        }
+
+        const userCreated = await this.prisma.user.create({
+            data: {
+                person: {
+                    create: {
+                        name,
+                        birthAt,
+                        phone,
+                        //document,
+                    },
+                },
+                email,
+                password: bcrypt.hashSync(password, 10),
+            },
+            include: {
+                person: true
+            },
+        });
+
+        delete userCreated.password;
+
+        return userCreated;
+    }
+
+    async update(id: number, {
+        name,
+        email,
+        password,
+        birthAt,
+        phone,
+        document
+    }: {
+        name: string;
+        email: string;
+        password: string;
+        birthAt?: Date;
+        phone?: string;
+        document?: string;
+    }) {
+        
+        const userCreated = await this.prisma.user.create({
+            data: {
+                person: {
+                    create: {
+                        name,
+                        birthAt,
+                        phone,
+                        //document,
+                    },
+                },
+                email,
+                password: bcrypt.hashSync(password, 10),
+            },
+            include: {
+                person: true
+            },
+        });
+
+        delete userCreated.password;
+
+        return userCreated;
     }
 }
