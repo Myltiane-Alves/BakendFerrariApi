@@ -19,14 +19,19 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
+    "prisma:update": " prisma db pull && prisma generate",
     "migrate:create": "typeorm migration:create",
     "migrate:up": "ts-node --transpile-only ./node_modules/typeorm/cli.js migration:run",
-    "migrate:down": "ts-node --transpile-only ./node_modules/typeorm/cli.js migration:run:revert"
+    "postmigrate:up": "npm run prisma:update",
+    "migrate:down": "ts-node --transpile-only ./node_modules/typeorm/cli.js migration:revert",
+    "postmigrate:down": "npm run prisma:update"
+
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
+    "@prisma/client": "^3.9.1",
     "mysql2": "^2.3.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
