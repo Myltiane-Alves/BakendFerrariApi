@@ -1,4 +1,5 @@
-import { Controller, Get, Param, Query } from "@nestjs/common";
+import { Body, Controller, Get, Param, Put, Query } from "@nestjs/common";
+import { id } from "date-fns/locale";
 import { UserService } from "./user.service";
 
 
@@ -15,5 +16,14 @@ export class UserController {
     @Get()
     async showByEmail(@Query('email') email) {
         return this.userService.getByEmail(email);
+    }
+
+    @Put(':id')
+    async update(
+        @Param('id') id,
+        @Body() body, 
+  
+    ) {
+        return this.userService.update(id, body);
     }
 }
