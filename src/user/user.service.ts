@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import * as bcrypt from 'bcrypt';
 import { Prisma } from "@prisma/client";
@@ -7,7 +7,7 @@ import { Prisma } from "@prisma/client";
 export class UserService {
     constructor(private prisma: PrismaService) {}
 
-    async get(id: number) {
+    async get(id: number, hash = false) {
 
         id = Number(id);
 
@@ -24,7 +24,10 @@ export class UserService {
             },
         });
 
-        delete user.password; 
+        if(!hash) {
+
+            delete user.password; 
+        }
 
         if (!user) {
             throw new NotFoundException("User not found")
@@ -107,9 +110,9 @@ export class UserService {
                     create: {
                         name,
                         birthAt,
-                        phone,
                         document,
-                    },
+                        phone
+                    }
                 },
                 email,
                 password: bcrypt.hashSync(password, 10),
@@ -129,13 +132,15 @@ export class UserService {
         email,
         birthAt,
         phone,
-        document
+        document,
+        photo
     }: {
         name?: string;
         email?: string;
         birthAt?: Date;
         phone?: string;
         document?: string;
+        photo?: string;
     }) {
 
         id = Number(id);
@@ -166,6 +171,10 @@ export class UserService {
             dataUser.email = email;
         }
 
+        if (photo) {
+            dataUser.photo = photo;
+        }
+
         const user = await this.get(id);
 
         if (dataPerson) {
@@ -179,7 +188,6 @@ export class UserService {
         }
 
         if (dataUser) {
-
             await this.prisma.user.update({
                 where: {
                     id,
@@ -189,5 +197,17 @@ export class UserService {
         }
      
         return this.get(id);
+    }
+
+    async checkPassword(id: number, password: string) {
+        const user = await this.get(id, true);
+
+        const checked = await bcrypt.compare(password, user.password);
+
+        if(!checked) {
+            throw new UnauthorizedException('Email or password is incorrect');
+        }
+
+        return true;
     }
 }
