@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, BadRequestException } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 
@@ -7,16 +7,24 @@ export class AuthGuard implements CanActivate {
 
     constructor(private authService: AuthService) {}
 
-    canActivate(
+    async canActivate(
         context: ExecutionContext,
-    ): boolean | Promise<boolean> | Observable<boolean> {
+    ):  Promise<boolean> {
         
-        const request = context.switchToHttp().getRequest();
-        const authorization = request.headers['authorization'];
-        const token = authorization.split(' ')[1];
+        try {
+            const request = context.switchToHttp().getRequest();
+            const authorization = request.headers['authorization'];
+            const token = authorization.split(' ')[1];
 
-        const data = this.authService.decodeToken(token);
+            if(!token) {
+                throw new BadRequestException('Token is required');
+            }
+
+            const data = await this.authService.decodeToken(token);
+        } catch (e) {
+            return false;
+        }
         
-        return data ? true : false;
+        return true;
     }
 }

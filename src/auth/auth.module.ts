@@ -12,7 +12,7 @@ import { JwtModule } from "@nestjs/jwt";
             useFactory: () => ({
                 secret: process.env.JWT_SECRET,
                 signOptions: {
-                    expiresIn: process.env.JWT_EXPIRE
+                    expiresIn: Number(process.env.JWT_EXPIRE)
                 }
             })
         })
