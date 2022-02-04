@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Post } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Headers, Post, Req } from "@nestjs/common";
 import { parse } from "date-fns";
 
 import { UserService } from "src/user/user.service";
@@ -61,6 +61,14 @@ export class AuthController {
     @Post('login')
     async login(@Body('email') email, @Body('password') password) {
 
-        return this.authService.login({{email, password}};)
+        return this.authService.login({email, password})
+    }
+
+    @Get('me')
+    async me(@Headers('authorization') authorization) {
+
+        const token = authorization.split(' ')[1];
+
+        return this.authService.decodeToken(token);
     }
 }

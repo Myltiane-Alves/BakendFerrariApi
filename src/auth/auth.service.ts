@@ -14,20 +14,15 @@ export class AuthService {
         private mailService: MailService
         ) {}
 
-    async getToken(userId: number)
-    {
+    async getToken(userId: number)   {
 
         const { email, photo, id, person } = await this.userService.get(userId);
         const { name } = person;
 
-        return this.jwtService.sign({
-            name, email, photo, id
-        })
-        ;
+        return this.jwtService.sign({name, email, photo, id });
     }
 
-    async login({email, password}: {email: string; password: string})
-    {
+    async login({email, password}: {email: string; password: string}){
 
         const user = await this.userService.getByEmail(email);
 
@@ -41,8 +36,7 @@ export class AuthService {
         
     }
 
-    async decodeToken(token: string)
-    {
+    async decodeToken(token: string) {
         try {
             await this.jwtService.verify(token);
         } catch (error) {
