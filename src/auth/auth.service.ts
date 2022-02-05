@@ -48,14 +48,12 @@ export class AuthService {
 
     async recovery(email: string) {
         
-        const { id, person } = await this.userService.getByEmail(email);
-        const { name } = person;
+        const { id, } = await this.userService.getByEmail(email);
 
         const token = await this.jwtService.sign({
-            id
-        },
-        {
-            expiresIn: "30mins"
+           
+        
+            expiresIn: 30 * 60
         }
         );
 
@@ -66,66 +64,11 @@ export class AuthService {
             }
         });
 
-        await this.mailService.send({
-            to: email,
-            from: 'miguel@griel.com.br',
-            subject: "Esqueci a senha",
-            template: "forget",
-            data: {
-                name: name,
-                url: `https://ferrari-hcodelab.web.app/auth.html?token=${token}`
-            }
-        });
-
+        
         return { success: true}
 
     }
 
-    async reset({
-        password,
-        token
-    }: {
-        password: string;
-        token: string;
-    })
-    {
-
-        if (!password) {
-            throw new BadRequestException('Password is required');
-        }
-
-        try {
-            
-            await this.jwtService.verify(token);
-            
-        } catch (e) {
-
-            throw new BadRequestException(e.message)
-            
-        }
-
-        const passwordRecovery = await this.prisma.passwordRecovery.findFirst({
-            where: {
-                token: token,
-                resetAt: null
-            }
-        });
-
-        if (!passwordRecovery) {
-            throw new BadRequestException('Token used');
-        }
-
-        await this.prisma.passwordRecovery.update({
-            where: {
-                id: passwordRecovery.id
-            },
-            data: {
-                resetAt: new Date()
-            }
-        });
-
-        return this.userService.updatePassword(passwordRecovery.userId, password);
-
-    }
+   
     
 }
