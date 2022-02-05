@@ -3,6 +3,7 @@ import { parse } from "date-fns";
 import { User } from "src/user/user.decorator";
 
 import { UserService } from "src/user/user.service";
+import { brotliDecompress } from "zlib";
 import { Auth } from "./auth.decorator";
 import { AuthGuard } from "./auth.guard";
 import { AuthService } from "./auth.service";
@@ -85,4 +86,16 @@ export class AuthController {
         }
         return this.userService.update(user.id, body);
     }
+
+    @UseGuards(AuthGuard)
+    @Put('password')
+    async changePassword(
+        @Body('currentPassword') currentPassword,
+        @Body('newPassword') newPassword,
+        @User('id') id
+    ) {
+
+        return this.userService.changePassword(id, currentPassword, newPassword)
+    }
+    
 }
