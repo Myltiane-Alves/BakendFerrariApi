@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException,  BadRequestException  } from "@nestjs/common";
 import { JwtService } from '@nestjs/jwt';
-//import { MailService } from 'src/mail/mail.service';
+import { MailService } from "src/mail/mail.service";
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 
@@ -48,11 +48,10 @@ export class AuthService {
 
     async recovery(email: string) {
         
-        const { id, } = await this.userService.getByEmail(email);
+        const { id, person } = await this.userService.getByEmail(email);
+        const { name } = person;
 
-        const token = await this.jwtService.sign({
-           
-        
+        const token = await this.jwtService.sign({    
             expiresIn: 30 * 60
         }
         );
@@ -64,7 +63,14 @@ export class AuthService {
             }
         });
 
-        
+        await this.mailService.send({
+            to: email,
+            subject: 'Esqueci a senha',
+            template: 'forget.pug',
+            data: {
+                name
+            }
+        })        
         return { success: true}
 
     }
