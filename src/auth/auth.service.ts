@@ -66,9 +66,10 @@ export class AuthService {
         await this.mailService.send({
             to: email,
             subject: 'Esqueci a senha',
-            template: 'forget.pug',
+            template: 'forget',
             data: {
-                name
+                name,
+                url: `https://site-ferrari-lab.web.app/auth.html?token=${token}`
             }
         })        
         return { success: true}
