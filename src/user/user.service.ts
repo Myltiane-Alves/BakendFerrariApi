@@ -3,6 +3,8 @@ import { PrismaService } from "src/prisma/prisma.service";
 import * as bcrypt from 'bcrypt';
 import { Prisma } from "@prisma/client";
 import { MailService } from "src/mail/mail.service";
+import { join } from "path";
+import { existsSync, unlinkSync } from "fs";
 
 @Injectable()
 export class UserService {
@@ -256,5 +258,31 @@ export class UserService {
         await this.checkPassword(id, currentPassword);
 
         return this.updatePassword(id, newPassword);
+    }
+
+    async removePhoto(userId: number) {
+
+        const { photo } = await this.get(userId);
+
+        if (photo) {
+            const currentPhoto = join(__dirname, '../', '../', '../', 'storage', 'photos', photo);
+            
+            if (existsSync(currentPhoto)){
+                unlinkSync(currentPhoto);
+            }
+        }
+    }
+
+    async setPhoto(id: number, file: Express.Multer.File) {
+
+        if (!['image/png', 'image/jpeg'].includes(file.mimetype)) {
+            throw new BadRequestException('Invalid file type')
+        }
+
+        // Remover a foto atuala se o usuário a possuir 
+        await this.removePhoto(id);
+        // Renomear arquivo temporário com a extensão correta
+
+        // Atualizar o registro da foto no Banco de Dados
     }
 }

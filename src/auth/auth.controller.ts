@@ -1,10 +1,9 @@
-import { BadRequestException, Body, Controller, Get, Headers, Post, Put, Req, UseGuards, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Headers, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { parse } from "date-fns";
 import { User } from "src/user/user.decorator";
 
 import { UserService } from "src/user/user.service";
-import { brotliDecompress } from "zlib";
 import { Auth } from "./auth.decorator";
 import { AuthGuard } from "./auth.guard";
 import { AuthService } from "./auth.service";
@@ -120,7 +119,7 @@ export class AuthController {
         }
     }))
     @Put('photo')
-    async setPhoto(@User() use) {
-        return {};
+    async setPhoto(@User() user, @UploadedFile() file: Express.Multer.File) {
+        return this.userService.setPhoto(user.id, file);
     }
 }
