@@ -1,6 +1,7 @@
-import { BadRequestException, Body, Controller, Get, Headers, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Headers, Post, Put, Req, Res, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { parse } from "date-fns";
+import { id } from "date-fns/locale";
 import { User } from "src/user/user.decorator";
 
 import { UserService } from "src/user/user.service";
@@ -121,5 +122,23 @@ export class AuthController {
     @Put('photo')
     async setPhoto(@User() user, @UploadedFile() file: Express.Multer.File) {
         return this.userService.setPhoto(user.id, file);
+    }
+
+    @UseGuards(AuthGuard)
+    @Get('photo')
+    async getPhoto(@User('id') id, @Res({ passthrough: true }) response) {
+
+        const { file, extension } = await this.userService.getPhoto(id);
+
+        switch (extension) {
+            case "png":
+                response.set({"Content-Type": "image/png"});
+                break;
+            case "jpg":
+                response.set({"Content-Type": "image/jpeg"});
+                break;
+        }
+
+        return new StreamableFile(file);
     }
 }
