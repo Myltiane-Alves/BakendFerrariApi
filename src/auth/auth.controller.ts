@@ -1,18 +1,21 @@
 import { BadRequestException, Body, Controller, Get, Headers, Post, Put, Req, Res, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
-import { FileInterceptor } from "@nestjs/platform-express";
-import { parse } from "date-fns";
-import { id } from "date-fns/locale";
-import { User } from "src/user/user.decorator";
-
 import { UserService } from "src/user/user.service";
-import { Auth } from "./auth.decorator";
-import { AuthGuard } from "./auth.guard";
+import { parse } from "date-fns";
 import { AuthService } from "./auth.service";
+import { AuthGuard } from "./auth.guard";
+import { JwtService } from '@nestjs/jwt';
+import { Auth } from "./auth.decorator";
+import { User } from "src/user/user.decorator";
+import { FileInterceptor } from "@nestjs/platform-express";
 
 @Controller('auth')
 export class AuthController {
 
-    constructor(private userService: UserService, private authService: AuthService) {}
+    constructor(
+        private userService: UserService, 
+        private authService: AuthService,
+        private jwtService: JwtService
+    ) {}
 
     @Post()
     async verifyEmail(@Body('email') email) {

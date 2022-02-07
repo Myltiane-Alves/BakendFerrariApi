@@ -21,7 +21,7 @@ import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
                     from: `HCODE lab <${process.env.MAIL_FROM}>`
                 },
                 template: {
-                    dir: resolve(__dirname, 'tempalte'),
+                    dir: resolve(__dirname, 'templates'),
                     adapter: new PugAdapter(),  
                     options: {
                         strict: true,

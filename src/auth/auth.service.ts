@@ -39,8 +39,8 @@ export class AuthService {
     async decodeToken(token: string) {
         try {
             await this.jwtService.verify(token);
-        } catch (error) {
-            throw new UnauthorizedException('Access Denied!', error.message);
+        } catch (e) {
+            throw new UnauthorizedException('Access Denied!', e.message);
         }
 
         return this.jwtService.decode(token);
@@ -51,15 +51,14 @@ export class AuthService {
         const { id, person } = await this.userService.getByEmail(email);
         const { name } = person;
 
-        const token = await this.jwtService.sign({    
+        const token = await this.jwtService.sign({ id }, {    
             expiresIn: 30 * 60
-        }
-        );
+        });
 
         await this.prisma.passwordRecovery.create({
             data: {
                 userId: id,
-                token: token
+                token,
             }
         });
 

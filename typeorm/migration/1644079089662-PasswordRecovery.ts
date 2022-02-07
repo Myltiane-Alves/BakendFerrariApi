@@ -5,7 +5,6 @@ export class PasswordRecovery1644079089662 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(new Table({
             name: 'password_recoveries',
-
             columns: [{
                 name: 'id',
                 type: 'int',

@@ -1,77 +1,82 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from "typeorm";
+import {MigrationInterface, QueryRunner, Table, TableForeignKey} from "typeorm";
 
-export class User1643754420957 implements MigrationInterface {
+export class User1643076400229 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(new Table({
-            name: 'persons',
+            name: "persons",
             columns: [{
-                name: 'id',
-                type: 'int',
+                name: "id",
+                type: "int",
                 isPrimary: true,
                 isGenerated: true,
-                generationStrategy: 'increment'
+                generationStrategy: "increment"
             }, {
-                name: 'name',
-                type: 'varchar',
-                length: '250',
+                name: "name",
+                type: "varchar",
+                length: "250",
                 isNullable: false
             }, {
-                name: 'birthAt',
-                type: 'date',
+                name: "birthAt",
+                type: "date",
                 isNullable: true
             }, {
-                name: 'phone',
-                type: 'varchar',
-                length: '16',
+                name: "phone",
+                type: "varchar",
+                length: "16",
                 isNullable: true
             }, {
-                name: 'createdAt',
-                type: 'datetime',
-                default: 'CURRENT_TIMESTAMP'
+                name: "document",
+                type: "varchar",
+                length: "14",
+                isNullable: true
             }, {
-                name: 'updatedAt',
-                type: 'datetime',
-                default: 'CURRENT_TIMESTAMP'
+                name: "createdAt",
+                type: "datetime",
+                default: "CURRENT_TIMESTAMP"
+            }, {
+                name: "updatedAt",
+                type: "datetime",
+                default: "CURRENT_TIMESTAMP"
             }]
         }));
 
         await queryRunner.createTable(new Table({
-            name: 'users',
+            name: "users",
             columns: [{
-                name: 'id',
-                type: 'int',
+                name: "id",
+                type: "int",
                 isPrimary: true,
                 isGenerated: true,
-                generationStrategy: 'increment',
+                generationStrategy: "increment",
             }, {
-                name: 'email',
-                type: 'varchar',
-                length: '250',
+                name: "email",
+                type: "varchar",
+                length: "250",
                 isNullable: false,
                 isUnique: true,
             }, {
-                name: 'password',
-                type: 'varchar',
-                length: '255',
+                name: "password",
+                type: "varchar",
+                length: "250",
                 isNullable: false,
             }, {
-                name: 'photo',
-                type: 'varchar',
-                length: '255',
-                isNullable: true
+                name: "photo",
+                type: "varchar",
+                length: "255",
+                isNullable: true,
             }, {
-                name: 'personId',
-                type: 'int',
+                name: "personId",
+                type: "int",
                 isNullable: false,
             }, {
-                name: 'createdAt',
-                type: 'datetime',
-                default: 'CURRENT_TIMESTAMP',
+                name: "createdAt",
+                type: "datetime",
+                default: "CURRENT_TIMESTAMP",
             }, {
-                name: 'updatedAt',
-                type: 'datetime',
-                default: 'CURRENT_TIMESTAMP',
+                name: "updatedAt",
+                type: "datetime",
+                default: "CURRENT_TIMESTAMP",
             }]
         }));
 

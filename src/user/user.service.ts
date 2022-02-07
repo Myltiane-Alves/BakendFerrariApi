@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import { Prisma } from "@prisma/client";
 import { MailService } from "src/mail/mail.service";
 import { join } from "path";
@@ -31,7 +31,6 @@ export class UserService {
         });
 
         if(!hash) {
-
             delete user.password; 
         }
 
@@ -57,11 +56,11 @@ export class UserService {
             },
         });
 
+        delete user.password;
+
         if (!user) {
             throw new NotFoundException("User not found")
         }
-
-        delete user.password;
 
         return user;
     }
@@ -94,7 +93,7 @@ export class UserService {
             throw new BadRequestException("Password is required");
         }
 
-        if(birthAt && birthAt.toString().toLowerCase() === 'invaliddate'){
+        if(birthAt && birthAt.toString().toLowerCase() === 'invalid date'){
             throw new BadRequestException('Birth date is valid');
         }
 
@@ -117,14 +116,14 @@ export class UserService {
                         name,
                         birthAt,
                         document,
-                        phone
-                    }
+                        phone,
+                    },
                 },
                 email,
                 password: bcrypt.hashSync(password, 10),
             },
             include: {
-                person: true
+                person: true,
             },
         });
 
@@ -139,7 +138,7 @@ export class UserService {
         birthAt,
         phone,
         document,
-        photo
+        photo,
     }: {
         name?: string;
         email?: string;
@@ -190,7 +189,6 @@ export class UserService {
                 },
                 data: dataPerson
             });
-
         }
 
         if (dataUser) {
@@ -240,7 +238,6 @@ export class UserService {
             subject: 'Senha alterada com sucesso!',
             template: 'reset-password-confirm',
             data: {
-
                 name: userUpdated.person.name,
             },
             
