@@ -1,4 +1,5 @@
-import { BadRequestException, Body, Controller, Get, Headers, Post, Put, Req, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Headers, Post, Put, Req, UseGuards, UseInterceptors } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 import { parse } from "date-fns";
 import { User } from "src/user/user.decorator";
 
@@ -109,5 +110,17 @@ export class AuthController {
             password, 
             token
         })
+    }
+
+    @UseGuards(AuthGuard)
+    @UseInterceptors(FileInterceptor('file', {
+        dest: './storage/photos',
+        limits: {
+            fileSize: 5 * 1024 * 1024
+        }
+    }))
+    @Put('photo')
+    async setPhoto(@User() use) {
+        return {};
     }
 }
