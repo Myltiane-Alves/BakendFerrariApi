@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { Prisma } from "@prisma/client";
 import { MailService } from "src/mail/mail.service";
 import { join } from "path";
-import { existsSync, unlinkSync } from "fs";
+import { existsSync, renameSync, unlinkSync } from "fs";
 
 @Injectable()
 export class UserService {
@@ -260,17 +260,29 @@ export class UserService {
         return this.updatePassword(id, newPassword);
     }
 
+    getStoragePhotoPath(photo: string) {
+        
+        if(!photo) {
+            throw new BadRequestException('Photo is required.');
+        }
+
+        return join(__dirname, '../', '../', '../', 'storage', 'photos', photo);
+    }
     async removePhoto(userId: number) {
 
         const { photo } = await this.get(userId);
 
         if (photo) {
-            const currentPhoto = join(__dirname, '../', '../', '../', 'storage', 'photos', photo);
+            const currentPhoto = this.getStoragePhotoPath(photo);
             
             if (existsSync(currentPhoto)){
                 unlinkSync(currentPhoto);
             }
         }
+
+        return this.update(userId, {
+            photo: null,
+        })
     }
 
     async setPhoto(id: number, file: Express.Multer.File) {
@@ -281,8 +293,31 @@ export class UserService {
 
         // Remover a foto atuala se o usuário a possuir 
         await this.removePhoto(id);
+
         // Renomear arquivo temporário com a extensão correta
 
+        let ext = '';
+
+        switch (file.mimetype) {
+            case 'image/png':
+                ext = 'png';
+                break;
+            default: 
+                ext = 'image/jpg';
+        }
+
+        const photo = `${file.filename}.${ext}`;
+
+        const from = this.getStoragePhotoPath(file.filename);
+        const to = this.getStoragePhotoPath(photo);
+
+        renameSync(from, to);
+
+
         // Atualizar o registro da foto no Banco de Dados
+
+        return this.update(id, {
+            photo, 
+        })
     }
 }
