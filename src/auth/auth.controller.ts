@@ -3,10 +3,11 @@ import { UserService } from "src/user/user.service";
 import { parse } from "date-fns";
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "./auth.guard";
-import { JwtService } from '@nestjs/jwt';
+
 import { Auth } from "./auth.decorator";
 import { User } from "src/user/user.decorator";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { PasswordService } from "src/user/password.service";
 
 @Controller('auth')
 export class AuthController {
@@ -14,7 +15,7 @@ export class AuthController {
     constructor(
         private userService: UserService, 
         private authService: AuthService,
-        private jwtService: JwtService
+        private passwordService: PasswordService,
     ) {}
 
     @Post()
@@ -33,12 +34,10 @@ export class AuthController {
     async register(
         @Body('name') name, 
         @Body('email') email, 
-        @Body('password') password, 
-        @Body('phone') phone, 
         @Body('birthAt') birthAt, 
+        @Body('phone') phone, 
+        @Body('password') password, 
         @Body('document') document, 
-        
-        
         ) {
 
         if(birthAt) {
@@ -98,8 +97,7 @@ export class AuthController {
         @Body('newPassword') newPassword,
         @User('id') id
     ) {
-
-        return this.userService.changePassword(id, currentPassword, newPassword)
+        return this.passwordService.changePassword(id, currentPassword, newPassword)
     }
     
     @Post('forget')
@@ -108,7 +106,10 @@ export class AuthController {
     }
     
     @Post('password-reset')
-    async resetPassword(@Body('password') password: string, @Body('token') token: string) {
+    async resetPassword(
+        @Body('password') password: string,
+        @Body('token') token: string
+        ) {
         return  this.authService.reset({
             password, 
             token

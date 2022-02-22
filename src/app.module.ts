@@ -1,3 +1,5 @@
+import { ContactModule } from './contact/contact.module';
+import { PasswordService } from './user/password.service';
 import { MailModule } from './mail/mail.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
@@ -7,12 +9,15 @@ import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
     imports: [
+        ContactModule,
+        ContactModule,
         MailModule,
         AuthModule,
         UserModule,
         PrismaModule,
     ],
     controllers: [AppController],
-    providers: [],
+    providers: [
+        PasswordService,],
 })
 export class AppModule { }

@@ -10,11 +10,10 @@ import { createReadStream, existsSync, renameSync, unlinkSync } from "fs";
 export class UserService {
     constructor(
         private prisma: PrismaService,
-        private mailService: MailService,    
+      
     ) {}
 
     async get(id: number, hash = false) {
-
         id = Number(id);
 
         if(isNaN(id)) {
@@ -147,7 +146,6 @@ export class UserService {
         document?: string;
         photo?: string;
     }) {
-
         id = Number(id);
 
         if (isNaN(id)) {
@@ -203,59 +201,6 @@ export class UserService {
         return this.get(id);
     }
 
-    async checkPassword(id: number, password: string) {
-        const user = await this.get(id, true);
-
-        const checked = await bcrypt.compare(password, user.password);
-
-        if(!checked) {
-            throw new UnauthorizedException('Email or password is incorrect');
-        }
-
-        return true;
-    }
-
-    async updatePassword(id: number, password: string) {
-
-        const user = await this.get(id);
-
-        const userUpdated = await this.prisma.user.update({
-            where: {
-                id,
-            },
-            data: {
-                password: bcrypt.hashSync(password, 10),
-            },
-            include: {
-                person: true,
-            },
-        });
-
-        delete userUpdated.password;
-
-        await this.mailService.send({
-            to: userUpdated.email,
-            subject: 'Senha alterada com sucesso!',
-            template: 'reset-password-confirm',
-            data: {
-                name: userUpdated.person.name,
-            },
-            
-        });
-
-        return userUpdated;
-    }
-
-    async changePassword(id: number, currentPassword: string, newPassword: string) {
-
-        if(!newPassword) {
-            throw new BadRequestException("New password is required");
-        }
-
-        await this.checkPassword(id, currentPassword);
-
-        return this.updatePassword(id, newPassword);
-    }
 
     getStoragePhotoPath(photo: string) {
         
@@ -265,6 +210,7 @@ export class UserService {
 
         return join(__dirname, '../', '../', '../', 'storage', 'photos', photo);
     }
+
     async removePhoto(userId: number) {
 
         const { photo } = await this.get(userId);
@@ -304,15 +250,12 @@ export class UserService {
         }
 
         const photo = `${file.filename}.${ext}`;
-
         const from = this.getStoragePhotoPath(file.filename);
         const to = this.getStoragePhotoPath(photo);
 
         renameSync(from, to);
 
-
         // Atualizar o registro da foto no Banco de Dados
-
         return this.update(id, {
             photo, 
         });
