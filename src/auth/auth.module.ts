@@ -5,6 +5,7 @@ import { UserModule } from "src/user/user.module";
 import { JwtModule } from "@nestjs/jwt";
 import { PrismaModule } from "src/prisma/prisma.module";
 import { MailModule } from "src/mail/mail.module";
+import { PasswordService } from "src/user/password.service";
 
 
 @Module({
@@ -26,6 +27,7 @@ import { MailModule } from "src/mail/mail.module";
     ],
     providers: [
         AuthService,
+        PasswordService
     ],
 })
 

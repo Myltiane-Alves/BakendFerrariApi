@@ -10,7 +10,6 @@ import { PrismaModule } from './prisma/prisma.module';
 @Module({
     imports: [
         ContactModule,
-        ContactModule,
         MailModule,
         AuthModule,
         UserModule,

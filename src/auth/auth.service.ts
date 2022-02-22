@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException,  BadRequestException  } from "@nestjs/common";
+import {
+    Injectable,
+    UnauthorizedException, 
+    BadRequestException 
+} from "@nestjs/common";
 import { JwtService } from '@nestjs/jwt';
 import { MailService } from "src/mail/mail.service";
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -7,18 +11,15 @@ import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
-    passwordService: any;
-
     constructor(
         private userService: UserService,
         private jwtService: JwtService,
         private prisma: PrismaService,
         private mailService: MailService,
-        private PasswordService: PasswordService,
+        private passwordService: PasswordService,
         ) {}
 
     async getToken(userId: number)   {
-
         const { email, photo, id, person } = await this.userService.get(userId);
         const { name } = person;
 
@@ -49,8 +50,7 @@ export class AuthService {
         return this.jwtService.decode(token);
     }
 
-    async recovery(email: string) {
-        
+    async recovery(email: string) {     
         const { id, person } = await this.userService.getByEmail(email);
         const { name } = person;
 
@@ -85,17 +85,13 @@ export class AuthService {
         password: string;
         token: string;
     }) {
-
         if(!password) {
             throw new BadRequestException('Password is required');
         }
 
         try {
-
             await this.jwtService.verify(token);
-
         } catch (e) {
-
             throw new BadRequestException(e.message);
         }
 

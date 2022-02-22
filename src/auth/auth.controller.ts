@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Headers, Post, Put, Req, Res, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Post, Put, Res, StreamableFile, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UserService } from "src/user/user.service";
 import { parse } from "date-fns";
 import { AuthService } from "./auth.service";
@@ -11,7 +11,6 @@ import { PasswordService } from "src/user/password.service";
 
 @Controller('auth')
 export class AuthController {
-
     constructor(
         private userService: UserService, 
         private authService: AuthService,
@@ -20,7 +19,6 @@ export class AuthController {
 
     @Post()
     async verifyEmail(@Body('email') email) {
-
         try {
             await this.userService.getByEmail(email);
             return { exists: true };
@@ -38,19 +36,15 @@ export class AuthController {
         @Body('phone') phone, 
         @Body('password') password, 
         @Body('document') document, 
-        ) {
-
+    ) {
         if(birthAt) {
             try {
-
                 birthAt = parse(birthAt, 'yyyy-MM-dd', new Date());
             } catch (e) {
-
                 throw new BadRequestException('Birth date is invalid')
             }   
         }
         
-
         const user = await this.userService.create({
             name,
             email,
@@ -83,7 +77,6 @@ export class AuthController {
     @UseGuards(AuthGuard)
     @Put('profile')
     async profile(@User() user, @Body() body) {
-
         if(body.birthAt) {
             body.birthAt = parse(body.birthAt, 'yyyy-MM-dd', new Date());
         }
@@ -131,7 +124,6 @@ export class AuthController {
     @UseGuards(AuthGuard)
     @Get('photo')
     async getPhoto(@User('id') id, @Res({ passthrough: true }) response) {
-
         const { file, extension } = await this.userService.getPhoto(id);
 
         switch (extension) {
