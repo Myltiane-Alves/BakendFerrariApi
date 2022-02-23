@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -7,9 +7,20 @@ export class ContactService {
 
     async get(id: number) {
         
-        return this
+        id = Number(id);
+
+        if(isNaN(id)) {
+            throw new BadRequestException('ID is not a number');
+        }
+
+        return this.db.contact.findUnique({
+            where: {
+                id,
+            }
+        });
 
     }
+
     async list() {
 
         return this.db.contact.findMany();
@@ -25,10 +36,6 @@ export class ContactService {
         message: string;
     }) {
 
-        if (!name) {
-            throw new BadRequestException('O nome é o brigatório')
-        }
-
         if (!email) {
             throw new BadRequestException('a email é o brigatório')
         }
@@ -41,7 +48,7 @@ export class ContactService {
             sim relacionar o id dela á tabela de contatos
         */
 
-        let personId;
+        let personId: number;
 
         const user = await this.db.user.findUnique({
             where: {
@@ -56,13 +63,11 @@ export class ContactService {
             personId = Number(user.personId);
         } else {
             //verificando se a pessoa já existe no banco de dados
-
             const contact = await this.db.contact.findFirst({
                 where: {
                     email,
                 },
             });
-
             // se a pessoa existe
             if (contact) {
                 personId = Number(contact.personId);
@@ -91,11 +96,14 @@ export class ContactService {
 
         id = Number(id);
 
-        if (isNaN(Number(id))) {
+        if (isNaN(id)) {
             throw new BadRequestException('Id is invalid')
         }
 
-        if(!await)
+        if(!await this.get(id)) {
+            throw new NotFoundException('ID not exists')
+        }
+
         return this.db.contact.delete({
             where: {
                 id,
