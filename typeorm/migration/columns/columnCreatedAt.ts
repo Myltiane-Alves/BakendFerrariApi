@@ -1,9 +1,7 @@
 import { TableColumnOptions} from 'typeorm';
 
-export const columnId = {
-    name: 'id',
-    type: 'int',
-    isPrimary: true,
-    isGenerated: true,
-    generationStrategy: "increment",
+export const columnCreatedAt = {
+    name: 'createdAt',
+    type: 'datetime',
+    default: 'CURRENT_TIMESTAMP'
 } as TableColumnOptions;
