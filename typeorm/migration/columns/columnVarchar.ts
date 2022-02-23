@@ -1,11 +1,7 @@
 import { TableColumnOptions } from "typeorm";
 
-export function columnVarchar(length: string = "255") {
+export const columnVarchar = {
+    name: 'name',
+    type: 'varchar',
 
-    return {
-        name: 'name',
-        type: 'varchar',
-        length
-    } as TableColumnOptions
-
-}
+} as TableColumnOptions;
