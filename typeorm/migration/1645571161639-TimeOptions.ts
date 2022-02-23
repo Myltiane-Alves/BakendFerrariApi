@@ -31,9 +31,7 @@ export class TimeOptions1645571161639 implements MigrationInterface {
         }));
 
         for(let i = 0; i <= 6; i++) {
-            await queryRunner.query(`INSERT INTO time_options(day, time)
-                VALUES (${i}, '09:00') (${i}, '10:00), (${i}, '11:00'),  (${i}, '12:00); 
-            `);
+            await queryRunner.query(`INSERT INTO time_options(day, time) VALUES (${i}, '09:00'), (${i}, '10:00'), (${i}, '11:00'),  (${i}, '12:00') `);
         }
     }
 

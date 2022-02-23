@@ -5,6 +5,11 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ContactService {
     constructor(private db: PrismaService) { }
 
+    async get(id: number) {
+        
+        return this
+
+    }
     async list() {
 
         return this.db.contact.findMany();
@@ -13,13 +18,13 @@ export class ContactService {
     async create({
         name,
         email,
-        message 
-    }:{
+        message
+    }: {
         name: string;
         email: string;
         message: string;
     }) {
-              
+
         if (!name) {
             throw new BadRequestException('O nome é o brigatório')
         }
@@ -47,19 +52,19 @@ export class ContactService {
             },
         });
 
-        if(user) {
+        if (user) {
             personId = Number(user.personId);
         } else {
             //verificando se a pessoa já existe no banco de dados
 
             const contact = await this.db.contact.findFirst({
-                where:{
+                where: {
                     email,
                 },
             });
 
             // se a pessoa existe
-            if(contact) {
+            if (contact) {
                 personId = Number(contact.personId);
             } else {
 
@@ -80,5 +85,22 @@ export class ContactService {
                 message
             }
         })
+    }
+
+    async delete(id: number) {
+
+        id = Number(id);
+
+        if (isNaN(Number(id))) {
+            throw new BadRequestException('Id is invalid')
+        }
+
+        if(!await)
+        return this.db.contact.delete({
+            where: {
+                id,
+            }
+        })
+
     }
 }

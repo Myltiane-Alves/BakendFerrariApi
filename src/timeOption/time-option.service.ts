@@ -1,7 +1,3 @@
-/*
-https://docs.nestjs.com/providers#services
-*/
-
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -13,24 +9,55 @@ export class TimeOptionService {
     async listTimeOptions() {
 
         return this.prisma.timeOption.findMany();
+
     }
 
-    async createTimeOptions({day, time}: {day: number; time: Date}) {
+    async createTimeOption({
+        day,
+        time,
+    }: {
+        day: number;
+        time: string;
+    }) {
 
-        if(!day) {
-            throw new BadRequestException('Day is required')
+        day = Number(day);
+
+        if (day < 0 || day > 6 || isNaN(day)) {
+            throw new BadRequestException('Day is required.');
         }
 
-        if(!time) {
-            throw new BadRequestException('Day is required')
+        if (!time) {
+            throw new BadRequestException('Time is required.');
         }
 
-        await this.prisma.timeOption.create({
+        const splittedTime = time.split(':');
+
+        if (splittedTime.length !== 2) {
+            throw new BadRequestException('Invalid time.');
+        }
+
+        const hours = Number(splittedTime[0]);
+        const minutes = Number(splittedTime[1]);
+
+        if (hours < 0 || hours > 23 || isNaN(hours)) {
+            throw new BadRequestException('Invalid time.');
+        }
+
+        if (minutes < 0 || minutes > 59 || isNaN(minutes)) {
+            throw new BadRequestException('Invalid time.');
+        }
+
+        const timeDate = new Date();
+
+        timeDate.setHours(hours, minutes, 0);
+
+        return this.prisma.timeOption.create({
             data: {
                 day,
-                time
+                time: timeDate,
             },
         });
+
     }
 
 }

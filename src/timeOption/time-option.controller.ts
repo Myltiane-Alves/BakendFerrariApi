@@ -2,7 +2,7 @@
 https://docs.nestjs.com/controllers#controllers
 */
 
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { TimeOptionService } from './time-option.service';
 
 @Controller('time-options')
@@ -15,5 +15,16 @@ export class TimeOptionController {
         
         return this.timeOptionService.listTimeOptions();
 
+    }
+
+    @Post()
+    async create(
+        @Body('day') day,
+        @Body('time') time,
+    ) {
+        return this.timeOptionService.createTimeOption({
+            day,
+            time,
+        })
     }
 }
