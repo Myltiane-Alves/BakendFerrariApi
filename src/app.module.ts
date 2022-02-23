@@ -1,3 +1,4 @@
+import { TimeOptionModule } from './timeOption/time-option.module';
 import { ContactModule } from './contact/contact.module';
 import { PasswordService } from './user/password.service';
 import { MailModule } from './mail/mail.module';
@@ -9,6 +10,7 @@ import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
     imports: [
+        TimeOptionModule,
         ContactModule,
         MailModule,
         AuthModule,
