@@ -7,10 +7,10 @@ export class CreateAddressDto {
     @IsString()
     street: string;
     
-    @IsEmpty()
+    
     number: string;
     
-    @IsEmpty()
+    
     complement: string;
     
     @IsNotEmpty()

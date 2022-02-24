@@ -1,9 +1,9 @@
+import { PaymentSituationService } from './payment-situation/payment-situation.service';
+import { PaymentSituattionController } from './payment-situation/payment-situattion.controller';
 import { AddressService } from './address/address.service';
 import { AddressModule } from './address/address.module';
 import { AddressController } from './address/address.controller';
-import { PaymentSituationsModule } from './payment/payment-situations.module';
-import { PaymentSituationsService } from './payment/payment-situations.service';
-import { PaymentSituationsController } from './payment/payment-situations.controller';
+
 import { TimeOptionModule } from './timeOption/time-option.module';
 import { ContactModule } from './contact/contact.module';
 import { PasswordService } from './user/password.service';
@@ -14,11 +14,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { PrismaModule } from './prisma/prisma.module';
 import { ServiceModule } from './service/service.module';
+import { PaymentSituationModule } from './payment-situation/payment-situation.module';
 
 @Module({
     imports: [
         AddressModule,
-        PaymentSituationsModule,
         TimeOptionModule,
         ContactModule,
         MailModule,
@@ -26,13 +26,16 @@ import { ServiceModule } from './service/service.module';
         UserModule,
         PrismaModule,
         ServiceModule,
+        PaymentSituationModule,
     ],
     controllers: [
+        PaymentSituattionController,
         AddressController,
-        PaymentSituationsController, AppController],
+        AppController],
     providers: [
+        PaymentSituationService,
         AddressService,
-        PaymentSituationsService,
+
         PasswordService,],
 })
 export class AppModule { }

@@ -71,7 +71,7 @@ export class AuthService {
             template: 'forget',
             data: {
                 name,
-                url: `https://site-ferrari-lab.web.app/auth.html?token=${token}`
+                url: `https://ferrar-myltiane.web.app/auth.html?token=${token}`
             }
         })        
         return { success: true}

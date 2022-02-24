@@ -29,6 +29,7 @@ import { PasswordService } from "src/user/password.service";
         AuthService,
         PasswordService
     ],
+    exports: [AuthService]
 })
 
 export class AuthModule {}

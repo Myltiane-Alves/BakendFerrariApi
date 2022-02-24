@@ -5,7 +5,10 @@ import { AuthService } from './auth.service';
 @Injectable()
 export class AuthGuard implements CanActivate {
 
-    constructor(private authService: AuthService, private userService: UserService) {}
+    constructor(
+        private authService: AuthService, 
+        private userService: UserService
+    ) {}
 
     async canActivate(
         context: ExecutionContext,
