@@ -1,5 +1,4 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
-import { userInfo } from 'os';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { User } from 'src/user/user.decorator';
 import { AddressService } from './address.service';
@@ -10,12 +9,12 @@ import { UpdateAddressDto } from './dto/update-address.dto';
 export class AddressController {
 
     constructor(private addressService: AddressService) {}
+
     @UseGuards(AuthGuard)
     @Get()
     async listAll() {
         return this.addressService.findAll();
     }
-
 
     @UseGuards(AuthGuard)
     @Get('my-addresses')
@@ -30,7 +29,8 @@ export class AddressController {
     async getById(@Param('id', ParseIntPipe) id: number) {
         return this.addressService.findOne(id);
     }
-    
+
+    @UseGuards(AuthGuard)
     @Post()
     async createAddress(
         @Body() data: CreateAddressDto,
@@ -46,15 +46,16 @@ export class AddressController {
         @Param('id', ParseIntPipe) id: number,
         @User() user,
     ) {
-        return this.addressService.update(id, user.personId, data)
+        return this.addressService.update(id, user.personId, data);
     }
 
     @UseGuards(AuthGuard)
     @Delete(':id')
     async deleteAddress(
         @Param('id', ParseIntPipe) id: number,
-        @User() User,
+        @User() user,
     ) {
         return this.addressService.delete(id, user.personId);
     }
+
 }

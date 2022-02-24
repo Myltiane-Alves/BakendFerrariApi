@@ -1,26 +1,46 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { isValidId } from 'utils/validation-id';
 import { CreatePaymentSituationDto } from './dto/create-payment-situation.dto';
 import { UpdatePaymentSituationDto } from './dto/update-payment-situation.dto';
 
 @Injectable()
 export class PaymentSituationService {
-  create(createPaymentSituationDto: CreatePaymentSituationDto) {
-    return 'This action adds a new paymentSituation';
+
+  constructor(private prismaService: PrismaService) {}
+
+  create(data: CreatePaymentSituationDto) {
+    return this.prismaService.paymentSituation.create({
+      data,
+    });
   }
 
   findAll() {
-    return `This action returns all paymentSituation`;
+    return this.prismaService.paymentSituation.findMany();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} paymentSituation`;
+    return this.prismaService.paymentSituation.findUnique({
+      where: {
+        id: isValidId(id),
+      },
+    });
   }
 
   update(id: number, updatePaymentSituationDto: UpdatePaymentSituationDto) {
-    return `This action updates a #${id} paymentSituation`;
+    return this.prismaService.paymentSituation.update({
+      data: updatePaymentSituationDto,
+      where: {
+        id: isValidId(id),
+      },
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} paymentSituation`;
+    return this.prismaService.paymentSituation.delete({
+      where: {
+        id: isValidId(id),
+      },
+    });
   }
 }

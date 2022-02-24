@@ -107,12 +107,11 @@ model Address {
   @@map("addresses")
 }
 
-model payment {
-  id        Int       @id @default(autoincrement())
-  name      String    @db.VarChar(250)
-  birthAt   DateTime? @db.Date
-  phone     String?   @db.VarChar(16)
-  document  String?   @db.VarChar(14)
-  createdAt DateTime  @default(now()) @db.DateTime(0)
-  updatedAt DateTime  @default(now()) @db.DateTime(0)
+model PaymentSituation {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(45)
+  createdAt DateTime @default(now()) @db.DateTime(0)
+  updatedAt DateTime @default(now()) @db.DateTime(0)
+
+  @@map("payment_situations")
 }

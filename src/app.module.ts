@@ -1,5 +1,6 @@
+import { PaymentSituationModule } from './payment-situation/payment-situation.module';
 import { PaymentSituationService } from './payment-situation/payment-situation.service';
-import { PaymentSituattionController } from './payment-situation/payment-situattion.controller';
+import { PaymentSituationController } from './payment-situation/payment-situation.controller';
 import { AddressService } from './address/address.service';
 import { AddressModule } from './address/address.module';
 import { AddressController } from './address/address.controller';
@@ -14,10 +15,10 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { PrismaModule } from './prisma/prisma.module';
 import { ServiceModule } from './service/service.module';
-import { PaymentSituationModule } from './payment-situation/payment-situation.module';
 
 @Module({
     imports: [
+        PaymentSituationModule,
         AddressModule,
         TimeOptionModule,
         ContactModule,
@@ -26,10 +27,9 @@ import { PaymentSituationModule } from './payment-situation/payment-situation.mo
         UserModule,
         PrismaModule,
         ServiceModule,
-        PaymentSituationModule,
     ],
     controllers: [
-        PaymentSituattionController,
+        PaymentSituationController,
         AddressController,
         AppController],
     providers: [
