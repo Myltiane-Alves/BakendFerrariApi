@@ -21,6 +21,7 @@ model Person {
   document  String?   @db.VarChar(14)
   createdAt DateTime  @default(now()) @db.DateTime(0)
   updatedAt DateTime  @default(now()) @db.DateTime(0)
+  Address   Address[] @relation("addressesTopersons")
   Contact   Contact[] @relation("contactsTopersons")
   User      User[]
 
@@ -62,9 +63,9 @@ model Contact {
   message   String   @db.Text
   createdAt DateTime @default(now()) @db.DateTime(0)
   updatedAt DateTime @default(now()) @db.DateTime(0)
-  person    Person   @relation("contactsTopersons", fields: [personId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_contacs_persons")
+  persons   Person   @relation("contactsTopersons", fields: [personId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_contacts_persons")
 
-  @@index([personId], map: "FK_contacs_persons")
+  @@index([personId], map: "FK_contacts_persons")
   @@map("contacts")
 }
 
@@ -80,31 +81,38 @@ model TimeOption {
 
 model services {
   id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(255)
+  name        String   @db.VarChar(45)
   description String   @db.MediumText
   price       Decimal  @db.Decimal(10, 2)
   createdAt   DateTime @default(now()) @db.DateTime(0)
   updatedAt   DateTime @default(now()) @db.DateTime(0)
 }
 
-model address {
+model Address {
   id         Int      @id @default(autoincrement())
-  street     String
-  number     String   @db.VarChar(16)
-  complement String
-  district   String
-  city       String
-  state      String
-  country    String
+  street     String   @db.VarChar(255)
+  number     String?  @db.VarChar(16)
+  complement String?  @db.VarChar(255)
+  district   String   @db.VarChar(255)
+  city       String   @db.VarChar(255)
+  state      String   @db.VarChar(255)
+  country    String   @db.VarChar(255)
   zipcode    String   @db.VarChar(8)
   personId   Int
   createdAt  DateTime @default(now()) @db.DateTime(0)
   updatedAt  DateTime @default(now()) @db.DateTime(0)
+  persons    Person   @relation("addressesTopersons", fields: [personId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_addresses_persons")
+
+  @@index([personId], map: "FK_addresses_persons")
+  @@map("addresses")
 }
 
 model payment {
-  id        Int      @id @default(autoincrement())
-  name      String   @db.VarChar(45)
-  createdAt DateTime @default(now()) @db.DateTime(0)
-  updatedAt DateTime @default(now()) @db.DateTime(0)
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(250)
+  birthAt   DateTime? @db.Date
+  phone     String?   @db.VarChar(16)
+  document  String?   @db.VarChar(14)
+  createdAt DateTime  @default(now()) @db.DateTime(0)
+  updatedAt DateTime  @default(now()) @db.DateTime(0)
 }

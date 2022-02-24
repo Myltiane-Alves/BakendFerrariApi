@@ -1,10 +1,10 @@
 import {MigrationInterface, QueryRunner, Table, TableForeignKey} from "typeorm";
 
-export class PasswordRecovery1644079089662 implements MigrationInterface {
+export class PasswordRecovery1643325632406 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(new Table({
-            name: 'password_recoveries',
+            name: "password_recoveries",
             columns: [{
                 name: 'id',
                 type: 'int',
@@ -24,20 +24,20 @@ export class PasswordRecovery1644079089662 implements MigrationInterface {
             }, {
                 name: 'createdAt',
                 type: 'datetime',
-                default: '  CURRENT_TIMESTAMP'
+                default: 'CURRENT_TIMESTAMP'
             }, {
                 name: 'updatedAt',
                 type: 'datetime',
                 default: 'CURRENT_TIMESTAMP'
             }]
         }));
-        await queryRunner.createForeignKey('password_recoveries', new TableForeignKey({
+        await queryRunner.createForeignKey("password_recoveries", new TableForeignKey({
             columnNames: ['userId'],
             referencedColumnNames: ['id'],
             referencedTableName: 'users',
             name: 'FK_password_recoveries_users',
             onDelete: 'CASCADE'
-        }))
+        }));
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
