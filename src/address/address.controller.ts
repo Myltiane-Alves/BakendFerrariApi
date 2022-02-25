@@ -1,3 +1,4 @@
+
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { User } from 'src/user/user.decorator';
@@ -8,7 +9,9 @@ import { UpdateAddressDto } from './dto/update-address.dto';
 @Controller("addresses")
 export class AddressController {
 
-    constructor(private addressService: AddressService) {}
+    constructor(
+        private addressService: AddressService, 
+    ) {}
 
     @UseGuards(AuthGuard)
     @Get()
@@ -58,4 +61,8 @@ export class AddressController {
         return this.addressService.delete(id, user.personId);
     }
 
+    @Get('/cep/:cep')
+    async cep(@Param('cep') cep: string) {
+        return this.addressService.searchCep(cep);
+    }
 }
