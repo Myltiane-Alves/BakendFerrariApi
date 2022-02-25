@@ -1,6 +1,6 @@
 import { BadRequestException } from "@nestjs/common";
 
-export const isValidId = (id: number) => {
+export const isValidNumber = (id: number) => {
         
     id = Number(id);
 
