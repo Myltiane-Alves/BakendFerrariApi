@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException,  NotFoundException } from '@nestjs/common';
 
 import { PrismaService } from 'src/prisma/prisma.service';
 import { isValidNumber } from 'utils/validation-id';
@@ -10,7 +10,24 @@ export class ScheduleService {
     constructor(private prisma: PrismaService) { }
 
     async findAll() {
+        return this.prisma.schedule.findMany();
+    }
+    async findByPerson(id: number) {
+        
+        return this.prisma.schedule.findMany({
+            where: {
+                personId: isValidNumber(id),
+            },
+        });
+    }
 
+    async findOne(id: number) {
+
+        return this.prisma.schedule.findUnique({
+            where: {
+                id: isValidNumber(id)
+            }
+        })
     }
 
     async create(personId: number, {
@@ -24,11 +41,45 @@ export class ScheduleService {
     }: CreateScheduleDto) {
 
         scheduleAt = new Date(scheduleAt);
+        timeOptionId = isValidNumber(timeOptionId);
+        billingAddressId = isValidNumber(billingAddressId);
 
+        const timeOpotion = await this.prisma.timeOption.findUnique({
+            where: {
+                id: isValidNumber(timeOptionId),
+            },
+        });
+        
+        if(!timeOpotion) {
+            throw new BadRequestException('Time option not found.')
+        };
+        
+        const address = await this.prisma.address.findUnique({
+            where: {
+                id: billingAddressId,
+            },
+        });
+        
+        if(!address) {
+            throw new NotFoundException('Adress not found.')
+        };
+        
+        const currentScheduleAt = await this.prisma.schedule.findFirst({
+            where: {
+                scheduleAt,
+            },
+        });
+        
+        if(currentScheduleAt) {
+            throw new BadRequestException('Schedule already choosen.')
+        };
+        
+        
+        
         const schedule = await this.prisma.schedule.create({
             data: {
-                timeOptionId: isValidNumber(timeOptionId),
-                billingAddressId: isValidNumber(billingAddressId),
+                timeOptionId,
+                billingAddressId,
                 paymentSituationId: isValidNumber(paymentSituationId),
                 scheduleAt,
                 total: isValidNumber(total),
@@ -50,5 +101,17 @@ export class ScheduleService {
         }
 
         return schedule;
+    }
+
+    async remove(id: number, personId: number) {
+
+        await this.isValidPerson(id, personId);
+
+        return this.prisma.schedule.delete({
+            where: {
+                id: isValidNumber(id),
+            },
+        });
+
     }
 }
