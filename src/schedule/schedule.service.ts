@@ -9,9 +9,24 @@ export class ScheduleService {
 
     constructor(private prisma: PrismaService) { }
 
+    async isValidPerson(id: number, personId: number) {
+
+        personId = isValidNumber(personId);
+
+        const schedule = await this.findOne(isValidNumber(id));
+
+        if (schedule.personId !== personId) {
+            throw new BadRequestException("Operation is invalid.");
+        }
+
+        return true;
+
+    }
+    
     async findAll() {
         return this.prisma.schedule.findMany();
     }
+
     async findByPerson(id: number) {
         
         return this.prisma.schedule.findMany({
